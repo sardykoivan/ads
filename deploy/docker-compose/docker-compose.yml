@@ -1,14 +1,48 @@
-version: '3'
+version: '2'
 
 services:
+    ads-nginx:
+        build:
+            context: ../
+            dockerfile: docker/Nginx.Dockerfile
+        container_name: "ads-nginx"
+        volumes:
+            - "../:/var/www"
+        ports:
+            - "8090:80"
+        links:
+            - "ads-fpm"
+    ads-fpm:
+        build:
+            context: ../docker
+            dockerfile: Fpm.Dockerfile
+
+        volumes:
+            - ../../:/var/www
+        container_name: "ads-fpm"
+        environment:
+            - "DB_PORT=3306"
+            - "DB_HOST=ads-mysql"
+            - "REDIS_PORT=6379"
+            - "REDIS_HOST=ads-redis"
+        links:
+            - "ads-mysql"
+            - "ads-redis"
     ads-mysql:
-        build: ../../
+#        build: ../../
         image: mysql:5.7
-#        container_name: "ads-mysql"
+        volumes:
+            - ../../storage/docker/mysql:/var/lib/mysql
+        container_name: "ads-mysql"
         environment:
             - "MYSQL_ROOT_PASSWORD=root"
             - "MYSQL_USER=ads"
             - "MYSQL_PASSWORD=ads"
             - "MYSQL_DATABASE=ads"
-#        ports:
-#            - "33061:3306"
+        ports:
+            - "33061:3306"
+    ads-redis:
+        image: redis:3.0
+        container_name: "ads-redis"
+        ports:
+            - "63791:6379"
