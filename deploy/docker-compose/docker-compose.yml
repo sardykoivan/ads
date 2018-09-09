@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+    ads-mysql:
+        build: ../../
+        image: mysql:5.7
+#        container_name: "ads-mysql"
+        environment:
+            - "MYSQL_ROOT_PASSWORD=root"
+            - "MYSQL_USER=ads"
+            - "MYSQL_PASSWORD=ads"
+            - "MYSQL_DATABASE=ads"
+#        ports:
+#            - "33061:3306"
